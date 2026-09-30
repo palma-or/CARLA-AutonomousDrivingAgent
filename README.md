@@ -6,6 +6,7 @@ Targeted improvements to the CARLA autonomous agent: dedicated managers for pede
 - [📚 Overview](#-overview)
 - [🚀 Improvements Introduced](#-improvements-introduced)
 - [⚙️ Control Systems](#️-control-systems)
+- [📁 Project Structure](#-project-structure)
 - [🛠️ Prerequisites](#-prerequisites)
 - [🏃 How to Run](#-how-to-run)
 
@@ -18,29 +19,7 @@ Rigorous testing demonstrated massive improvements over the baseline:
 - **Route 1 (Nighttime & Rain):** The enhanced agent completed 100% of the route at 40 km/h, achieving a near-perfect composed score of 99.02 with zero collisions.
 - **Route 4 (Daytime):** The agent achieved a 97.28 composed score and 100% completion at an optimal speed of 30 km/h, safely navigating all pedestrian and layout hazards.
 
-For detailed methodology, controller mathematics, and full results, see `Report.pdf`.
-
-## 📁 Project Structure
-```text
-├── 📁 userCode/
-│   ├── 📁 carla_behavior_agent/
-│   │   ├── basic_agent.py
-│   │   ├── behavior_agent.py
-│   │   ├── pedestrian_manager.py
-│   │   ├── obstacle_manager.py
-│   │   ├── junction_manager.py
-│   │   ├── vehicle_manager.py
-│   │   └── utils.py
-│   ├── route_1_avddiem.xml
-│   ├── route_4_avddiem.xml
-│   ├── run_sim.sh
-|   └── speed.txt
-├── Report.pdf
-├── docker_run_client.sh
-├── docker_run_server.sh
-├── Dockerfile
-└── README.md
-```
+For detailed methodology, controller mathematics, and full results, please refer to the `Report.pdf` document.
 
 ## 🚀 Improvements Introduced (Agent Architecture)
 
@@ -50,14 +29,14 @@ Refined pedestrian detection and collision avoidance:
 - Triggers automated emergency braking when pedestrians cross predefined critical safety thresholds.
 - Utilizes a widened front field of view to detect pedestrians earlier, significantly improving reaction times on curves.
 
-### 🚧 Static Obstacle Manager
-Enhanced handling of fixed hazards like construction zones and traffic cones:
-- Calculates dynamic overtaking trajectories for fully blocked lanes by estimating the required distance ($d_{overtake}$) and predicting oncoming traffic using uniform acceleration equations.
+### 🚧 Static Obstacle & Overtake Manager
+Enhanced handling of fixed hazards like construction zones and traffic cones via `overtake_manager.py`:
+- Calculates dynamic overtaking trajectories for fully blocked lanes by estimating the required distance and predicting oncoming traffic using uniform acceleration equations.
 - Cancels overtaking maneuvers immediately if a potential collision with oncoming traffic is detected.
 - Applies controlled lateral offsets (+0.2 or -2) to safely bypass partial blockages without leaving the ego-lane.
 
 ### 🚦 Junction Manager
-Sophisticated intersection navigation ensuring right-of-way compliance:
+Sophisticated intersection navigation ensuring right-of-way compliance via `junction_manager.py`:
 - Classifies intersections into four distinct structural types (e.g., straight/left, all directions) to adapt merging strategies.
 - Monitors the active turn indicators of surrounding vehicles to anticipate their trajectories and minimize collision risks.
 
@@ -78,6 +57,36 @@ The agent leverages fine-tuned baseline controllers to guarantee smooth longitud
 - **Longitudinal Control:** PID Controller ($K_P = 0.888$, $K_I = 0.0768$, $K_D = 0.05$).
 - **Lateral Control:** Stanley Controller ($K_V = 4.0$, $K_S = 1.0$).
 
+## 📁 Project Structure
+The repository is organized as follows:
+
+```text
+├── 📁 BehaviorManager/               # Specialized behavioral logic
+│   ├── junction_manager.py           # Logic for handling intersections
+│   └── overtake_manager.py           # Logic for overtaking and obstacle avoidance
+├── 📁 carla_behavior_agent/          # Core agent components
+│   ├── basic_agent.py
+│   ├── basic_autonomous_agent.py
+│   ├── behavior_agent.py
+│   ├── behavior_types.py
+│   ├── config_agent_basic.json
+│   ├── controller.py                 # PID and Stanley controllers
+│   ├── global_route_planner.py
+│   ├── local_planner.py
+│   ├── misc.py
+│   └── utils.py
+├── 📁 results/                       # Simulation outputs
+│   └── simulation_results.json
+├── route_1_avddiem_*.xml             # Scenario 1 route definition
+├── route_4_avddiem_*.xml             # Scenario 4 route definition
+├── run_scenario.sh                   # Script to run a specific scenario
+├── run_test.sh                       # Script to execute tests
+├── server_http.py                    # HTTP server utility
+├── speed.txt
+├── Projects_Tasks.pdf
+├── Report.pdf                        # Detailed project report
+└── README.md
+```
 ## 🛠️ Prerequisites
 To correctly run this project and replicate the development environment, the following system and software requirements must be met:
 
@@ -99,17 +108,14 @@ To correctly run this project and replicate the development environment, the fol
 git clone [https://github.com/YourUsername/CARLA-Autonomous-Driving-Agent.git](https://github.com/YourUsername/CARLA-Autonomous-Driving-Agent.git)
 cd CARLA-Autonomous-Driving-Agent
 
-# Start CARLA server using Docker
-./docker_run_server.sh
+# Start the CARLA server (ensure your environment is properly set up)
+# ...
 
-# In another terminal, start CARLA client using Docker
-./docker_run_client.sh
+# Launch the tests or specific scenarios using the provided scripts
+./run_test.sh
 
-# Connect to the client container and navigate to the code directory
-cd team_code/
-
-# Launch the autonomous driving agent
-./run_sim.sh
+# Or run a specific scenario
+./run_scenario.sh
 ```
 
 ## 👨‍💻 Authors
