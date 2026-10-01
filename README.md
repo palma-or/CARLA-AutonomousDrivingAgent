@@ -75,8 +75,14 @@ The repository is organized as follows:
 │   ├── local_planner.py
 │   ├── misc.py
 │   └── utils.py
-├── 📁 results/                       # Simulation outputs
+├── 📁 Final Results/                 # Final simulation evaluation results
+│   ├── Route1_Final_Result.json
+│   └── Route4_Final_Result.json
+├── 📁 results/                       # Standard simulation outputs
 │   └── simulation_results.json
+├── 📁 Simulations/                   # Detailed logs and intermediate test results
+│   ├── simulation_results_1_*.json
+│   └── simulation_results_4_*.json
 ├── route_1_avddiem_*.xml             # Scenario 1 route definition
 ├── route_4_avddiem_*.xml             # Scenario 4 route definition
 ├── run_scenario.sh                   # Script to run a specific scenario
@@ -87,6 +93,7 @@ The repository is organized as follows:
 ├── Report.pdf                        # Detailed project report
 └── README.md
 ```
+
 ## 🛠️ Prerequisites
 To correctly run this project and replicate the development environment, the following system and software requirements must be met:
 
